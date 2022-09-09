@@ -12,10 +12,44 @@ b:String
 }
 fn str2arb(mut _arb:String){
    _arb = _arb.replace(" ",""); 
-   _arb = _arb.replace("&a:","_&a:_"); 
-   _arb = _arb.replace("&r:","_&r:_"); 
-   _arb = _arb.replace("&b:","_&b:_"); 
-   let sp = _arb.split("_");
-   println!("sp:{:?}",sp);
-   println!("arb:{}",_arb);
+   _arb = _arb.replace("&a:"," &a: "); 
+   _arb = _arb.replace("&r:"," &r: "); 
+   _arb = _arb.replace("&b:"," &b: "); 
+   let sp = _arb.split_whitespace();
+   let cl:Vec<&str> = sp.collect();
+   println!("{:?}",cl);
+   let mut pa = 0;
+   let mut pr = 0;
+   let mut pb = 0;
+   let mut ca = 0;
+   let mut cr = 0;
+   let mut cb = 0;
+   
+   for (i,item) in cl.iter().enumerate(){
+      println!("{},{}",i,item);
+      if item == &"&a:"{
+         ca +=1;
+         if ca-cb ==0{
+           pa = i; 
+         }
+      }
+    println!("a:{},r:{},b:{}",ca,cr,cb);
+   
+      if item == &"&r:"{
+         cr += 1;
+         if ca-cr ==0{
+           pr = i;
+         }
+      }
+    println!("a:{},r:{},b:{}",ca,cr,cb);
+
+      if item == &"&b:"{
+         cb += 1;
+         if cr-cb ==0{
+           pb = i; 
+         }
+      }
+ println!("a:{},r:{},b:{}",ca,cr,cb);
+}//end:for
+ println!("a:{},r:{},b:{}",pa,pr,pb);
 }
