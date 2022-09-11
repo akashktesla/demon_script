@@ -1,7 +1,7 @@
 use std::any::{Any, TypeId};
 use std::collections::HashMap;
 use core::any::type_name;
-use crate::rustpp::{store_var,retrive_var};
+use rustpp::json::{store_var,retrive_var};
 use crate::ds_compiler::get_path;
 
 struct Arb{

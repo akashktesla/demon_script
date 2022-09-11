@@ -66,6 +66,7 @@ version = "0.1.0"
 dependencies = [
  "phf",
  "reqwest",
+ "rustpp",
  "serde",
  "serde_json",
  "tokio",
@@ -583,6 +584,16 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
+]
+
+[[package]]
+name = "rustpp"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2ac0a6cfb4b1660fee48e9576b2affe2bc3a8c6b34e071ec0df23d55f5d0c7f0"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
