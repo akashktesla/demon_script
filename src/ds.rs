@@ -1,6 +1,8 @@
 use std::any::{Any, TypeId};
 use std::collections::HashMap;
 use core::any::type_name;
+use crate::rustpp::{store_var,retrive_var};
+use crate::ds_compiler::get_path;
 
 struct Arb{
 a:String,
@@ -49,8 +51,6 @@ fn to_arb(&self)->Arb{
     a
 }}
 
-
-
 trait ToBool{
 fn to_bool(&self)->bool{
    return true
@@ -61,10 +61,6 @@ impl ToBool for String{
 fn to_bool(&self)->bool{
    self=="true"
 }}
-
-
-
-
 
 trait ToI32{
 fn to_i32(&self)->i32{
@@ -153,14 +149,24 @@ fn is_ds(&self)->bool{
 
 impl IsDs for String{
 fn is_ds(&self)->bool{
-let ds_tokens = ["&add:","&sub:"];
-ds_tokens.iter().any(|x| self.contains(x))
+   let ds_tokens = ["&add:","&sub:"];
+   ds_tokens.iter().any(|x| self.contains(x))
 }
 }
 
+fn get_flag_state(flag:String)->String{
+   let (file,dot)=get_path();
+   retrive_var(&format!("{}{}",file,dot),&flag)
+}
+
+fn set_flag_state(flag:String,value:String){
+   let (file,dot)=get_path();
+   store_var(&format!("{}{}",file,dot),&flag,&value)
+}
+
 fn add_ds(a:String,b:String)->String{
-let returns = run_ds(&a).to_i32()+run_ds(&b).to_i32();
-returns.to_string()
+   let returns = run_ds(&a).to_i32()+run_ds(&b).to_i32();
+   returns.to_string()
 }
 
 fn sub_ds(a:String,b:String)->String{
@@ -189,49 +195,94 @@ returns.to_string()
 }
 
 fn cmp_ds(a:String,b:String)->String{
-let returns = a==b;
+let returns = run_ds(&a)==run_ds(&b);
 returns.to_string()
 }
 
 fn ne_ds(a:String,b:String)->String{
-let returns = a!=b;
+let returns = run_ds(&a)!=run_ds(&b);
 returns.to_string()
 }
 
 fn lt_ds(a:String,b:String)->String{
-let returns = a<b;
+let returns = run_ds(&a)<run_ds(&b);
 returns.to_string()
 }
 
 fn gt_ds(a:String,b:String)->String{
-let returns = a>b;
+let returns = run_ds(&a)>run_ds(&b);
 returns.to_string()
 }
 fn ge_ds(a:String,b:String)->String{
-let returns = a>=b;
+let returns = run_ds(&a)>=run_ds(&b);
 returns.to_string()
 }
 fn le_ds(a:String,b:String)->String{
-let returns = a<=b;
+let returns = run_ds(&a)<=run_ds(&b);
 returns.to_string()
 }
 
 fn and_ds(a:String,b:String)->String{
-let returns = a.to_bool() && b.to_bool();
+let returns = run_ds(&a).to_bool() && run_ds(&b).to_bool();
 returns.to_string()
 }
 
 fn or_ds(a:String,b:String)->String{
-let returns = a.to_bool() || b.to_bool();
+let returns = run_ds(&a).to_bool() || run_ds(&b).to_bool();
 returns.to_string()
 }
 
+
 fn if_ds(a:String,b:String)->String{
    let returns = "".to_string();
-   if b.to_bool(){
+   if run_ds(&b).to_bool(){
       let returns = run_ds(&a);
    }
    returns
+}
+
+fn else_ds(a:String,b:String)->String{
+   let temp = get_flag_state("else".to_string());
+   set_flag_state(String::from("else"),String::from("true"));
+   if get_flag_state("else".to_string()).to_bool(){
+      set_flag_state(String::from("else"),temp);
+      run_ds(&b)   
+   }
+   else{
+      set_flag_state(String::from("else"),temp);
+      run_ds(&a)   
+   }
+}
+fn loop_ds(cond:String,ablock:String)->String{
+
+    let returns = "true".to_string();
+    while run_ds(&cond).to_bool(){
+       let returns = run_ds(&ablock);
+    }
+   returns
+}
+
+fn out_ds(a:String,b:String)->String{
+   if a =="console"{
+      println!("{}",run_ds(&b));
+   }
+   "true".to_string()
+}
+
+fn set_ds(a:String,b:String)->String{
+   let (file,dot)=get_path();
+   store_var(&format!("{}{}",file,dot),&run_ds(&a),&run_ds(&b));
+   "true".to_string()
+}
+
+fn ret_ds(a:String,b:String)->String{
+   if run_ds(&a)=="vars"{
+      let (file,dot)=get_path();
+      retrive_var(&format!("{}{}",file,dot),&run_ds(&b))
+   }
+   else{
+      "".to_string()
+   }
 }
 
 pub fn run_ds(_ds:&String)->String{
@@ -239,7 +290,7 @@ pub fn run_ds(_ds:&String)->String{
       let mut returns  = "".to_string();
       let _dsarb = _ds.to_arb();
        match _dsarb.r.as_str(){
-      "&add:"|"+"=>returns = add_ds(_dsarb.a,_dsarb.b),
+      "&add:"=>returns = add_ds(_dsarb.a,_dsarb.b),
       "&sub:"=>returns = sub_ds(_dsarb.a,_dsarb.b),
       "&mul:"=>returns = mul_ds(_dsarb.a,_dsarb.b),
       "&div:"=>returns = div_ds(_dsarb.a,_dsarb.b),
@@ -254,8 +305,10 @@ pub fn run_ds(_ds:&String)->String{
       "&and:"=>returns = and_ds(_dsarb.a,_dsarb.b),
       "&or:"=>returns = or_ds(_dsarb.a,_dsarb.b),
       "&if:"=>returns = if_ds(_dsarb.a,_dsarb.b),
+      "&else:"=>returns = else_ds(_dsarb.a,_dsarb.b),
+      "&loop:"=>returns = loop_ds(_dsarb.a,_dsarb.b),
+      "&out:"=>returns = out_ds(_dsarb.a,_dsarb.b),
 
-      
       &_=>returns = panic!("DS:SYNTAX ERROR")
      }
    returns
@@ -265,9 +318,4 @@ pub fn run_ds(_ds:&String)->String{
    }
 }
 
-fn loop_ds(cond:bool,ablock:String){
-    while cond{
-        run_ds(&ablock);
-    }
-}
 

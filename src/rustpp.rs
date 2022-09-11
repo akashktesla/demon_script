@@ -77,11 +77,11 @@ pub fn store_var(path:&String,key:&String,value:&String){
     write_json(path,&rjcon);
 }
 
-pub fn retrive_var(path:&String,key:&String,value:&String)->String{
+pub fn retrive_var(path:&String,key:&String)->String{
     println!("path uh {}",path);
     let mut rcon = read_file(path);
     let mut rjcon = read_json(&rcon);
-    "asldfj".to_string()
+    rjcon[key].to_string()
 }
 
 
