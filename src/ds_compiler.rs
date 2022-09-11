@@ -8,7 +8,6 @@ let path = args.get(1).expect("provide a path to .ds file");
 let contents = read_file(path);
 let ret = run_ds(&contents);
 println!("{}",ret);
-
 }
 
 

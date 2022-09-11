@@ -49,6 +49,23 @@ fn to_arb(&self)->Arb{
     a
 }}
 
+
+
+trait ToBool{
+fn to_bool(&self)->bool{
+   return true
+}
+}
+
+impl ToBool for String{
+fn to_bool(&self)->bool{
+   self=="true"
+}}
+
+
+
+
+
 trait ToI32{
 fn to_i32(&self)->i32{
    0
@@ -70,11 +87,6 @@ fn to_u32(&self)->u32{
 self.parse::<u32>().unwrap()
 }
 }
-
-
-
-
-
 
 fn str2arb(mut _arb:String)->Arb{
    _arb = _arb.replace(" ",""); 
@@ -186,6 +198,41 @@ let returns = a!=b;
 returns.to_string()
 }
 
+fn lt_ds(a:String,b:String)->String{
+let returns = a<b;
+returns.to_string()
+}
+
+fn gt_ds(a:String,b:String)->String{
+let returns = a>b;
+returns.to_string()
+}
+fn ge_ds(a:String,b:String)->String{
+let returns = a>=b;
+returns.to_string()
+}
+fn le_ds(a:String,b:String)->String{
+let returns = a<=b;
+returns.to_string()
+}
+
+fn and_ds(a:String,b:String)->String{
+let returns = a.to_bool() && b.to_bool();
+returns.to_string()
+}
+
+fn or_ds(a:String,b:String)->String{
+let returns = a.to_bool() || b.to_bool();
+returns.to_string()
+}
+
+fn if_ds(a:String,b:String)->String{
+   let returns = "".to_string();
+   if b.to_bool(){
+      let returns = run_ds(&a);
+   }
+   returns
+}
 
 pub fn run_ds(_ds:&String)->String{
    if _ds.is_arb(){
@@ -200,6 +247,14 @@ pub fn run_ds(_ds:&String)->String{
       "&pow:"=>returns = pow_ds(_dsarb.a,_dsarb.b),
       "&cmp:"=>returns = cmp_ds(_dsarb.a,_dsarb.b),
       "&ne:"=>returns = ne_ds(_dsarb.a,_dsarb.b),
+      "&lt:"=>returns = lt_ds(_dsarb.a,_dsarb.b),
+      "&gt:"=>returns = gt_ds(_dsarb.a,_dsarb.b),
+      "&le:"=>returns = le_ds(_dsarb.a,_dsarb.b),
+      "&ge:"=>returns = ge_ds(_dsarb.a,_dsarb.b),
+      "&and:"=>returns = and_ds(_dsarb.a,_dsarb.b),
+      "&or:"=>returns = or_ds(_dsarb.a,_dsarb.b),
+      "&if:"=>returns = if_ds(_dsarb.a,_dsarb.b),
+
       
       &_=>returns = panic!("DS:SYNTAX ERROR")
      }
