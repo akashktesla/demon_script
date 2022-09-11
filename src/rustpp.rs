@@ -1,7 +1,20 @@
 use std::fs::File;
+use std::fs::write;
+use std::fs::create_dir;
 use std::io::prelude::*;
 use serde_json::Value as JsonValue;
 use serde::de::DeserializeOwned;
+
+pub fn create_file(path:String,file_name:String){
+match create_dir(&path){
+    Ok(v) => (),
+    Err(e) => () ,
+}
+match File::create(format!("{}/{}",path,file_name)){
+    Ok(v) => (),
+    Err(e) => () ,
+}
+}//end
 
 pub fn read_file(path:&String)->String{
     let mut _file = File::open(path).expect("can't open file");
@@ -9,6 +22,13 @@ pub fn read_file(path:&String)->String{
     _file.read_to_string(&mut contents).expect("can't read the file");
     contents = format!(r#"{}"#,contents); 
     return contents
+}
+
+pub fn write_file(path:&String,contents:&String){
+    match write(path,contents){
+    Ok(v) =>(),
+    Err(e) => () ,
+    }
 }
 
 pub fn read_json(contents:&String)->JsonValue {
@@ -21,6 +41,11 @@ pub fn read_json(contents:&String)->JsonValue {
         panic!("something went wrong!!")
     } 
 
+}
+
+pub fn write_json(path:&String,contents:&JsonValue){
+    let con = contents.to_string();
+    write_file(path,&con);
 }
 
 pub fn sync_json<T:DeserializeOwned>(contents:&String)->T {
@@ -43,3 +68,22 @@ pub fn extractor <T:DeserializeOwned> (_name:String,_path:String)->T{
     let returns:T = sync_json(&data);
     returns
 }
+
+pub fn store_var(path:&String,key:&String,value:&String){
+    println!("path uh {}",path);
+    let mut rcon = read_file(path);
+    let mut rjcon = read_json(&rcon);
+    rjcon[key]=JsonValue::from(value.to_string());
+    write_json(path,&rjcon);
+}
+
+pub fn retrive_var(path:&String,key:&String,value:&String)->String{
+    println!("path uh {}",path);
+    let mut rcon = read_file(path);
+    let mut rjcon = read_json(&rcon);
+    "asldfj".to_string()
+}
+
+
+
+
