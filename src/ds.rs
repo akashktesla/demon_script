@@ -156,12 +156,12 @@ fn is_ds(&self)->bool{
 
 fn get_flag_state(flag:String)->String{
    let (file,dot)=get_path();
-   retrive_var(&format!("{}{}",file,dot),&flag)
+   retrive_var(&format!("{}.{}",file,dot),&flag)
 }
 
 fn set_flag_state(flag:String,value:String){
    let (file,dot)=get_path();
-   store_var(&format!("{}{}",file,dot),&flag,&value)
+   store_var(&format!("{}.{}",file,dot),&flag,&value)
 }
 
 fn add_ds(a:String,b:String)->String{
@@ -271,14 +271,14 @@ fn out_ds(a:String,b:String)->String{
 
 fn set_ds(a:String,b:String)->String{
    let (file,dot)=get_path();
-   store_var(&format!("{}{}",file,dot),&run_ds(&a),&run_ds(&b));
+   store_var(&format!("{}.{}",file,dot),&run_ds(&a),&run_ds(&b));
    "true".to_string()
 }
 
 fn ret_ds(a:String,b:String)->String{
    if run_ds(&a)=="vars"{
       let (file,dot)=get_path();
-      retrive_var(&format!("{}{}",file,dot),&run_ds(&b))
+      retrive_var(&format!("{}.{}",file,dot),&run_ds(&b))
    }
    else{
       "".to_string()
