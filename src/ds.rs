@@ -149,7 +149,7 @@ fn is_ds(&self)->bool{
 
 impl IsDs for String{
 fn is_ds(&self)->bool{
-   let ds_tokens = ["&add:","&sub:"];
+   let ds_tokens = ["&add:","&sub:","&:"];
    ds_tokens.iter().any(|x| self.contains(x))
 }
 }
@@ -285,6 +285,14 @@ fn ret_ds(a:String,b:String)->String{
    }
 }
 
+
+//index
+fn index_ds(a:String,b:String)->String{
+   let index = b.to_string().parse::<usize>().unwrap();
+   return a.chars().nth(index).unwrap().to_string()
+}
+
+
 pub fn run_ds(_ds:&String)->String{
    if _ds.is_arb(){
       let mut returns  = "".to_string();
@@ -308,7 +316,9 @@ pub fn run_ds(_ds:&String)->String{
       "&else:"=>returns = else_ds(_dsarb.a,_dsarb.b),
       "&loop:"=>returns = loop_ds(_dsarb.a,_dsarb.b),
       "&out:"=>returns = out_ds(_dsarb.a,_dsarb.b),
-
+      "&set:" => returns = set_rs(_dsarb.a,_dsarb.b),
+      "&ret:" => returns = ret_rs(_dsarb.a,_dsarb.b),
+      "&iof:" => returns = index_ds(_dsarb.a,_dsarb.b),
       &_=>returns = panic!("DS:SYNTAX ERROR")
      }
    returns
@@ -317,5 +327,3 @@ pub fn run_ds(_ds:&String)->String{
       _ds.to_string()
    }
 }
-
-
