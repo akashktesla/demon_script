@@ -149,7 +149,9 @@ fn is_ds(&self)->bool{
 
 impl IsDs for String{
 fn is_ds(&self)->bool{
-   let ds_tokens = ["&add:","&sub:","&:"];
+   let ds_tokens = ["&add:","&sub:","&mul:","&div:","&mod:","&pow:","&cmp:",
+   "&ne:","&lt:","&gt:","&le:","&ge:","&and:","&or:","&if:","&else:","&loop:",
+   "&out:","&set:","&ret:","&iof:"];
    ds_tokens.iter().any(|x| self.contains(x))
 }
 }
